@@ -1,0 +1,176 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <math.h>
+int main()
+{
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+
+	int day_first, month_first, year_first, day_second, month_second, year_second, in_month_first, in_month_second;
+	scanf("%d %d %d %d %d %d", &day_first, &month_first, &year_first, &day_second, &month_second, &year_second);
+
+	if (1 > year_first || year_first > 2012)
+	{
+		printf("ERROR");
+		return 0;
+	}
+
+	if (1 > year_second || year_second > 2012)
+	{
+		printf("ERROR");
+		return 0;
+	}
+
+	 //проверка 31-дневных месяцев
+	if (month_first == 1 || month_first == 3 || month_first == 5 || month_first == 7 || month_first == 8 || month_first == 10 || month_first == 12)
+	{
+		if (1 > day_first || day_first > 31)
+		{
+			printf("ERROR");
+			return 0;
+		}
+		else
+			in_month_first = 31;
+	}
+	 //проверка 30-дневных месяцев
+	else if (month_first == 4 || month_first == 6 || month_first == 9 || month_first == 11)
+	{
+		if (1 > day_first || day_first > 30)
+		{
+			printf("ERROR");
+			return 0;
+		}
+		else
+			in_month_first = 30;
+	}
+	 //проверка на февраль
+	else if (month_first == 2)
+	{
+		 //проверка на високосность
+		if (((year_first % 4 == 0) && (year_first % 100 != 0)) || year_first % 400 == 0)
+		{
+			if (1 > day_first || day_first > 29)
+			{
+				printf("ERROR");
+				return 0;
+			}
+			else
+				in_month_first = 29;
+		}
+		 //проверка на високосность не прошла
+		else
+			if (1 > day_first || day_first > 28)
+			{
+				printf("ERROR");
+				return 0;
+			}
+			else
+				in_month_first = 28;
+	}
+	else
+	{
+		printf("ERROR");
+		return 0;
+	}
+	
+	 //проверка 31-дневных месяцев
+	if (month_second == 1 || month_second == 3 || month_second == 5 || month_second == 7 || month_second == 8 || month_second == 10 || month_second == 12)
+	{
+		if (1 > day_second || day_second > 31)
+		{
+			printf("ERROR");
+			return 0;
+		}
+		else
+			in_month_second = 31;
+	}
+	 //проверка 30-дневных месяцев
+	else if (month_second == 4 || month_second == 6 || month_second == 9 || month_second == 11)
+	{
+		if (1 > day_second || day_second > 30)
+		{
+			printf("ERROR");
+			return 0;
+		}
+		else
+			in_month_second = 30;
+	}
+	 //проверка на февраль
+	else if (month_second == 2)
+	{
+		 //проверка на високосность
+		if (((year_second % 4 == 0) && (year_second % 100 != 0)) || year_second % 400 == 0)
+		{
+			if (1 > day_second || day_second > 29)
+			{
+				printf("ERROR");
+				return 0;
+			}
+			else
+				in_month_second = 29;
+		}
+		 //проверка на високосность не прошла
+		else
+			if (1 > day_second || day_second > 28)
+			{
+				printf("ERROR");
+				return 0;
+			}
+			else
+				in_month_second = 28;
+	}
+	else
+	{
+		printf("ERROR");
+		return 0;
+	}
+
+	 int months[12];
+	months[0] = months[2] = months[4] = months[6] = months[7] = months[9] = months[11] = 31;
+	months[3] = months[5] = months[8] = months[10] = 30;
+	months[1] = 28;
+
+//  правильный порядок first и second
+	int prom;
+	if (year_first > year_second || (year_first == year_second && month_first > month_second) || (year_first == year_second && month_first == month_second && day_first > day_second))
+	{
+		prom = year_first;
+		year_first = year_second;
+		year_second = prom;
+		prom = month_first;
+		month_first = month_second;
+		month_second = prom;
+		prom = day_first;
+		day_first = day_second;
+		day_second = prom;
+		prom = in_month_first;
+		in_month_first = in_month_second;
+		in_month_second = prom;
+	}
+
+	int  answer = -1;
+	answer = day_second + in_month_first - day_first;
+
+	for (int i = month_first; i <= 11; ++i)
+			answer += months[i];
+
+	answer = answer + 365 * (fabs(year_second - year_first) - 1);
+
+	for (int i = year_first + 1; i <= year_second - 1; ++i)
+		if ((i % 4 == 0 && i % 100 != 0) || i % 400 == 0)
+			++answer;
+
+		for (int i = 1; i <= month_second - 1; ++i)
+			answer = answer + months[i - 1];
+
+	if (((year_first % 4 == 0 && year_first % 100 != 0) || year_first % 400 == 0) && month_first < 2)
+		++answer;
+
+	if (((year_second % 4 == 0 && year_second % 100 != 0) || year_second % 400 == 0) && month_second > 2)
+		++answer;
+
+
+  printf("%d", answer);
+	fclose(stdin);
+	fclose(stdout);
+}
